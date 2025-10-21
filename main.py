@@ -1,5 +1,6 @@
 import flet as ft
 from alert import AlertManager
+from automobile import Automobile
 from autonoleggio import Autonoleggio
 
 FILE_AUTO = "automobili.csv"
@@ -37,6 +38,12 @@ def main(page: ft.Page):
 
     # Tutti i TextField per le info necessarie per aggiungere una nuova automobile (marca, modello, anno, contatore posti)
     # TODO
+    #creo 3 campi TextField, non metto value perché devo aggiungere una nuova automobile
+    input_marca=ft.TextField(label='Marca')
+    input_modello = ft.TextField(label="Modello")
+    input_anno= ft.TextField(label="Anno")
+
+
 
     # --- FUNZIONI APP ---
     def aggiorna_lista_auto():
@@ -59,6 +66,18 @@ def main(page: ft.Page):
 
     # Handlers per la gestione dei bottoni utili all'inserimento di una nuova auto
     # TODO
+    #questo è il testo per gestire il counter,slide 18 pwp7
+    def handleAdd(e):
+        currentVal = txtOut.value
+
+        txtOut.value = currentVal + 1
+        txtOut.update()
+
+    def handleRemove(e):
+        currentVal = txtOut.value
+
+        txtOut.value = currentVal - 1
+        txtOut.update()
 
     # --- EVENTI ---
     toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=cambia_tema)
@@ -66,6 +85,19 @@ def main(page: ft.Page):
 
     # Bottoni per la gestione dell'inserimento di una nuova auto
     # TODO
+    #crea i bottoni + e - del counter, slide 19 pwp 7
+    btnMinus = ft.IconButton(icon=ft.Icons.REMOVE,
+                             icon_color="green",
+                             icon_size=24, on_click=handleRemove)
+    btnAdd = ft.IconButton(icon=ft.Icons.ADD,
+                           icon_color="green",
+                           icon_size=24, on_click=handleAdd)
+    txtOut = ft.TextField(width=100, disabled=True,
+                          value=0, border_color="green",
+                          text_align=ft.TextAlign.CENTER)
+    row1 = ft.Row([btnMinus, txtOut, btnAdd],
+                  alignment=ft.MainAxisAlignment.CENTER)
+    page.add(row1)
 
     # --- LAYOUT ---
     page.add(
@@ -84,6 +116,7 @@ def main(page: ft.Page):
 
         # Sezione 3
         # TODO
+        ft.Text("Aggiungi Nuova Automobile ", size=20),
 
         # Sezione 4
         ft.Divider(),
