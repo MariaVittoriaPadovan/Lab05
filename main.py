@@ -1,10 +1,18 @@
 import flet as ft
-from alert import AlertManager
-from autonoleggio import Autonoleggio
+from view import View
+from controller import Controller
+from model import Autonoleggio
 
-FILE_AUTO = "automobili.csv"
 
 def main(page: ft.Page):
+    #setup del MODEL, della VIEW, del CONTROLLER in base al pattern MVC
+    view = View(page)#inizializza la pagina
+    model=Autonoleggio("Polito Rent", "Alessandro Visconti")
+    controller = Controller(view, model)
+    view.set_controller(controller)
+    view.add_content()
+    ft.add_content()
+
     page.title = "Lab05"
     page.horizontal_alignment = "center"
     page.theme_mode = ft.ThemeMode.DARK
