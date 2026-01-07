@@ -42,6 +42,8 @@ def main(page: ft.Page):
     input_modello = ft.TextField(label="Modello")
     input_anno= ft.TextField(label="Anno")
 
+    txt_posti= ft.TextField(value='0', width=60, disabled=True, text_align=ft.TextAlign.CENTER)
+
 
     # --- FUNZIONI APP ---
     def aggiorna_lista_auto():
@@ -64,42 +66,32 @@ def main(page: ft.Page):
 
     # Handlers per la gestione dei bottoni utili all'inserimento di una nuova auto
     # TODO
-    #questo è il testo per gestire il counter,slide 18 pwp7
-    def handleAdd(e):
-        currentVal = int(txtOut.value)
-        txtOut.value = currentVal + 1
-        txtOut.update()
-
-    def handleRemove(e):
-        currentVal = int(txtOut.value)
-        txtOut.value = currentVal - 1
-        txtOut.update()
-
-    def conferma_automobile(e):
+   #handler per creare l'automobile
+    def aggiungi_auto(e): #passo l'evento e perché so già che sarà collegato ad un pulsante
         try:
-            marca=input_marca.value
-            modello=input_modello.value
-            anno=int(input_anno.value)
-            posti=int(txtOut.value)
+            anno= int(input_anno.value)
+            posti= int(txt_posti.value)
+            autonoleggio.aggiungi_automobile(input_marca.value, input_modello.value, anno, posti)
 
-            if not marca or not modello:
-                raise ValueError("Inserisci marca e modello validi")
-
-            if anno < 1885 or anno > 2025 or posti==0 or posti>=8: #1885 anno prima macchina
-                raise ValueError("Inserisci valori numerici validi per anno e posti")
-
-            autonoleggio.aggiungi_automobile(marca, modello, anno, posti)
-
-            #svuoto i campi
-            input_marca.value = ""
-            input_modello.value = ""
-            input_anno.value = ""
-
+            #setto tutti i singoli elementi a vuoto come richiesto
+            input_marca.value=input_modello.value=input_anno.value=txt_posti.value= ""
             aggiorna_lista_auto()
-            page.update()
 
-        except Exception as e:
-            alert.show_alert(f"❌ Errore: {e}")
+        except ValueError:
+            alert.show_alert("Valore inserito non valido")
+
+    #handler per incrementare il numero di posti
+    def incrementa_posti(e):
+        current_val= txt_posti.value
+        txt_posti.value= f"{int(current_val)+1}"
+        txt_posti.update()
+
+    #handler per diminuire il numero di posti
+    def decrementa_posti(e):
+        current_val= txt_posti.value
+        txt_posti.value= f"{int(current_val)-1}"
+        txt_posti.update()
+
 
     # --- EVENTI ---
     toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=cambia_tema)
@@ -107,18 +99,17 @@ def main(page: ft.Page):
 
     # Bottoni per la gestione dell'inserimento di una nuova auto
     # TODO
-    #crea i bottoni + e - del counter, slide 19 pwp 7
-    btnMinus = ft.IconButton(icon=ft.Icons.REMOVE,
-                             icon_color="red",
-                             icon_size=24, on_click=handleRemove)
-    btnAdd = ft.IconButton(icon=ft.Icons.ADD,
-                           icon_color="green",
-                           icon_size=24, on_click=handleAdd)
-    txtOut = ft.TextField(width=100, disabled=True,
-                          value=0, border_color="green",
-                          text_align=ft.TextAlign.CENTER)
+    pulsante_aggiungi_auto = ft.ElevatedButton("Aggiungi auto", on_click=aggiungi_auto)
 
-    pulsante_conferma_automobile = ft.ElevatedButton("Aggiungi Automobile", on_click=conferma_automobile)
+    pulsante_incrementa_posti=ft.IconButton(icon=ft.Icons.ADD,
+                                            icon_color="red",
+                                            icon_size=24,
+                                            on_click=incrementa_posti)
+
+    pulsante_decrementa_posti=ft.IconButton(icon=ft.Icons.REMOVE,
+                                            icon_color="red",
+                                            icon_size=24,
+                                            on_click=decrementa_posti)
 
 
     # --- LAYOUT ---
@@ -138,14 +129,12 @@ def main(page: ft.Page):
 
         # Sezione 3
         # TODO
+        ft.Divider(),
         ft.Text("Aggiungi Nuova Automobile ", size=20),
-        ft.Row(spacing=20,
-               controls=[input_marca, input_modello, input_anno, btnMinus, txtOut, btnAdd],
+        ft.Row(spacing=30,
+               controls=[input_marca, input_modello, input_anno, ft.Row([pulsante_decrementa_posti, txt_posti, pulsante_incrementa_posti])],
                alignment=ft.MainAxisAlignment.CENTER),
-
-        ft.Row(spacing=0,
-               controls=[pulsante_conferma_automobile],
-               alignment=ft.MainAxisAlignment.CENTER),
+        pulsante_aggiungi_auto,
 
         # Sezione 4
         ft.Divider(),
